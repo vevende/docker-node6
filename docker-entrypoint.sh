@@ -2,7 +2,7 @@
 set -eo pipefail
 
 # Fix permissions if needed.
-find /app ! -user app -exec chown app:app {} \;
+find /app ! -user $APP_USER -exec chown $APP_USER:$APP_USER {} \;
 
 case "$1" in
     npm|gulp|webpack|-)
@@ -11,9 +11,9 @@ case "$1" in
             shift
         fi
 
-        gosu node npm install
+        gosu $APP_USER npm install
 
-        set -- gosu node "$@"
+        set -- gosu $APP_USER "$@"
         ;;
 esac
 

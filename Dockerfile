@@ -23,6 +23,7 @@ RUN set -x \
 
 ENV LANG=C.UTF-8 \
     LC_COLLATE=C \
+    APP_USER=node \
     PATH=/app/node_modules/.bin:${PATH}
 
 RUN set -x \
