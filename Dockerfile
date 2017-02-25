@@ -19,12 +19,21 @@ ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
 
 RUN set -x \
     && mkdir -p /app \
-    && chown node.node -R /app \
-    && gosu node npm config set cache /app/.cache
+    && chown node.node -R /app
 
-ENV PATH="/app/node_modules/.bin:${PATH}"
+ENV LANG=C.UTF-8 \
+    LC_COLLATE=C \
+    PATH=/app/node_modules/.bin:${PATH}
+
+RUN set -x \
+    && npm config set -g cache /app/.cache \
+    && npm config set -g progress false \
+    && npm config set -g jobs 2 \
+    && npm config set -g color false \
+    && npm config set -g loglevel http \
 
 ONBUILD COPY package.json /app
-ONBUILD RUN cd /app \
+ONBUILD RUN set -x \
+        && cd /app \
         && gosu node npm install \
         && gosu node npm cache clean

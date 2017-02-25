@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-export LC_COLLATE=C
+# Fix permissions if needed.
+find /app ! -user app -exec chown app:app {} \;
 
 case "$1" in
-    gulp|npm)
+    npm|gulp|webpack|-)
+        # Cleanup shortcut
+        if [ ${1} = '-' ]; then
+            shift
+        fi
+
         gosu node npm install
+
         set -- gosu node "$@"
         ;;
 esac
