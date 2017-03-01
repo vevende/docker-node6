@@ -7,7 +7,7 @@ find /app ! -user $APP_USER -exec chown $APP_USER:$APP_USER {} \;
 update-node-env() {
     if [ -f /app/package.json ]; then
     echo -n "* Installing packages"
-    cd /app && gosu $APP_USER npm install /app/package.json
+    cd /app && gosu $APP_USER npm install
     echo "[Done]"
     fi
 }
