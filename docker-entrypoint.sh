@@ -23,8 +23,6 @@ case "$1" in
             shift
         fi
 
-        gosu $APP_USER npm install
-
         set -- gosu $APP_USER "$@"
         ;;
 esac
