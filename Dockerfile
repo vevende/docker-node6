@@ -32,10 +32,3 @@ RUN set -x \
     && npm config set -g jobs 2 \
     && npm config set -g color false \
     && npm config set -g loglevel http
-
-ONBUILD COPY package.json /app
-
-ONBUILD RUN set -x \
-        && cd /app \
-        && gosu node npm install \
-        && gosu node npm cache clean
