@@ -5,7 +5,7 @@ set -eo pipefail
 find /app ! -user $APP_USER -exec chown $APP_USER:$APP_USER {} \;
 
 update-node-env() {
-    if [ -f /app/package.json ] && [ -d /app/node_modules ]; then
+    if [ -f /app/package.json ] && [ ! -d /app/node_modules ]; then
     echo -n "* Installing packages"
     cd /app && gosu $APP_USER npm install
     echo "[Done]"
