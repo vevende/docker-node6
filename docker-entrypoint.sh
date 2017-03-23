@@ -1,23 +1,23 @@
-#!/usr/bin/env bash
+#!/bin/sh
 set -eo pipefail
+shopt -s nullglob
 
-# Fix permissions if needed.
-find /app ! -user $APP_USER -exec chown $APP_USER:$APP_USER {} \;
-
-update-node-env() {
-    if [ -f /app/package.json ] && [ ! -d /app/node_modules ]; then
-    echo -n "* Installing packages"
-    cd /app && gosu $APP_USER npm install
-    echo "[Done]"
-    fi
-}
-
-export -f update-node-env
+for f in /docker-entrypoint.d/*; do
+    case "$f" in
+        *.sh)
+            echo "$0: running $@"
+            . "$f";
+            echo "$0: completed $@" ;;
+        *.js)
+            echo "$0: running: $@";
+            gosu ${APP_USER} node "$f";
+            echo "$0: completed $@" ;;
+        *) echo "$0: ignoring $f" ;;
+    esac
+done
 
 case "$1" in
     npm|gulp|webpack|-)
-        update-node-env
-
         # Cleanup shortcut
         if [ ${1} = '-' ]; then
             shift
@@ -27,4 +27,5 @@ case "$1" in
         ;;
 esac
 
+echo "running: $@"
 exec "$@"
