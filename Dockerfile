@@ -1,34 +1,41 @@
 FROM node:6-slim
 
-RUN buildDeps='wget ca-certificates' \
-    && set -x \
-    && apt-get update -y \
-    && apt-get install -q -y --no-install-recommends python $buildDeps \
-    && wget -O /sbin/gosu "https://github.com/tianon/gosu/releases/download/1.10/gosu-$(dpkg --print-architecture)" \
-    && chmod +x /sbin/gosu \
-    && apt-get purge -y --auto-remove $buildDeps \
-    && rm -rf /var/lib/{apt,dpkg,cache,log}/ \
-    && rm -rf /usr/share/{man,doc}/ \
-    && rm -rf /var/log/* \
-    && rm -rf /tmp/*
+RUN set -x \
+	&& export GOSU_VERSION=1.10 \
+    && apk add --no-cache --virtual .gosu-deps \
+		dpkg \
+		gnupg \
+		openssl \
+	&& dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+	&& export GNUPGHOME="$(mktemp -d)" \
+	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+	&& rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+	&& chmod +x /usr/local/bin/gosu \
+	&& gosu nobody true \
+	&& apk del .gosu-deps
 
-WORKDIR /app
-
-COPY docker-entrypoint.sh /sbin/docker-entrypoint.sh
-ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
+RUN set -ex \
+    && apk add --no-cache git python make
 
 RUN set -x \
     && mkdir -p /app \
-    && chown node.node -R /app
-
-ENV LANG=C.UTF-8 \
-    LC_COLLATE=C \
-    APP_USER=node \
-    PATH=/app/node_modules/.bin:${PATH}
-
-RUN set -x \
+    && mkdir -p /docker-entrypoint.d \
+    && chown node.node -R /app \
     && npm config set -g cache /app/.cache \
     && npm config set -g progress false \
     && npm config set -g jobs 2 \
     && npm config set -g color false \
     && npm config set -g loglevel http
+
+ENV LANG=C.UTF-8 \
+    LC_COLLATE=C \
+    PATH=/app/node_modules/.bin:${PATH}
+
+ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
+COPY docker-entrypoint.sh /sbin/docker-entrypoint.sh
+WORKDIR /app
+
+CMD ["node"]
