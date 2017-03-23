@@ -1,8 +1,12 @@
 #!/bin/sh
 set -eo pipefail
-shopt -s nullglob
 
 for f in /docker-entrypoint.d/*; do
+    # Deals with dash not having support for nullglob
+    if [ ! -e "$f" ] ; then
+        continue
+    fi
+
     case "$f" in
         *.sh)
             echo "$0: running $@"
