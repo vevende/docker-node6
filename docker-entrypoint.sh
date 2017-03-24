@@ -14,7 +14,7 @@ for f in /docker-entrypoint.d/*; do
             echo "$0: completed $@" ;;
         *.js)
             echo "$0: running: $@";
-            gosu ${APP_USER} node "$f";
+            gosu node node "$f";
             echo "$0: completed $@" ;;
         *) echo "$0: ignoring $f" ;;
     esac
@@ -27,7 +27,7 @@ case "$1" in
             shift
         fi
 
-        set -- gosu $APP_USER "$@"
+        set -- gosu node "$@"
         ;;
 esac
 
