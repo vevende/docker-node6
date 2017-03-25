@@ -3,7 +3,7 @@ const { spawnSync } = require('child_process')
 
 
 describe('tests', function() {
-    it('Check modules from packages.json are installed', function(done) {
+    it('Check modules from packages.json are installed', function() {
         let ret = spawnSync('npm', ['ls', '--json', '--depth', '0'])
         let data = JSON.parse(ret.stdout);
         let installed = Object.keys(data.dependencies);
@@ -11,8 +11,6 @@ describe('tests', function() {
         assert.equal(installed.length, 2)
         assert(installed.indexOf('mocha') > -1)
         assert(installed.indexOf('has-module') > -1)
-
-        done()
     })
 
     it('Common tools are installed', function(done) {
