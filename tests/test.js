@@ -4,8 +4,8 @@ const { spawnSync } = require('child_process')
 
 describe('tests', function() {
     it('Check modules from packages.json are installed', function() {
-        let ret = spawnSync('npm', ['ls', '--json', '--depth', '0'])
-        let data = JSON.parse(ret.stdout);
+        let stdout = spawnSync('npm', ['ls', '--json', '--depth', '0']).stdout
+        let data = JSON.parse(stdout);
         let installed = Object.keys(data.dependencies);
 
         assert.equal(installed.length, 2)
