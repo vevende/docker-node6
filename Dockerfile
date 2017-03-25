@@ -18,7 +18,7 @@ RUN set -x \
 
 # Use edge packages
 RUN set -ex \
-    && sed -i -e 's/v3\.5/edge/g' /etc/apk/repositories \
+    && sed -i -e 's/v3\.\d/edge/g' /etc/apk/repositories \
     && apk add --update --no-cache git python make
 
 RUN set -x \

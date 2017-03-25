@@ -9,13 +9,13 @@ for f in /docker-entrypoint.d/*; do
 
     case "$f" in
         *.sh)
-            echo "$0: running $@"
+            echo "$0: running $f"
             . "$f";
-            echo "$0: completed $@" ;;
+            echo "$0: completed $f" ;;
         *.js)
-            echo "$0: running: $@";
+            echo "$0: running: $f";
             gosu node node "$f";
-            echo "$0: completed $@" ;;
+            echo "$0: completed $f" ;;
         *) echo "$0: ignoring $f" ;;
     esac
 done
