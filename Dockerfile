@@ -1,4 +1,4 @@
-FROM node:6-alpine
+FROM node:8
 
 RUN set -x \
     && apk add --no-cache --virtual .gosu-deps \
@@ -19,7 +19,7 @@ RUN set -x \
 # Use edge packages
 RUN set -ex \
     && sed -i -e 's/v3\.\d/edge/g' /etc/apk/repositories \
-    && apk add --update --no-cache git python make
+    && apk add --update --no-cache git python make 
 
 RUN set -x \
     && mkdir -p /app \
