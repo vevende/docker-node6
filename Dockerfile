@@ -19,7 +19,7 @@ RUN set -ex \
 # Use edge packages
 RUN set -ex \
     && sed -i -e 's/v3\.\d/edge/g' /etc/apk/repositories \
-    && apk add --update --no-cache git python make
+    && apk add --update --no-cache git python make musl-dev
 
 # Environment user
 RUN set -x \
