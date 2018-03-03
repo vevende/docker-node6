@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:9
 
 RUN set -x \
     && apk add --no-cache --virtual .gosu-deps \
