@@ -1,4 +1,4 @@
-FROM node:9
+FROM node:9-alpine
 
 RUN set -x \
     && apk add --no-cache --virtual .gosu-deps \
