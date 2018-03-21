@@ -2,19 +2,7 @@ const assert = require('assert');
 const { spawnSync } = require('child_process')
 
 
-describe('tests', function(done) {
-    it('Check modules from packages.json are installed', function(done) {
-        let stdout = spawnSync('npm', ['ls', '--json', '--depth', '0']).stdout
-        let data = JSON.parse(stdout);
-        let installed = Object.keys(data.dependencies);
-
-        assert.equal(installed.length, 2)
-        assert(installed.indexOf('mocha') > -1)
-        assert(installed.indexOf('has-module') > -1)
-
-        done()
-    })
-
+describe('tests', function() {
     it('Common tools are installed', function(done) {
         assert.equal(spawnSync('which', ['git']).status, 0, 'Git is missing')
         assert.equal(spawnSync('which', ['python']).status, 0, 'Python is missing')
@@ -35,7 +23,6 @@ describe('tests', function(done) {
         assert.equal(spawnSync('test', ['-w', '/app']).status, 0, 'Wrong permissions for /app')
         done()
     })
-    done()
 })
 
 
