@@ -1,35 +1,14 @@
 FROM node:9-alpine
 
 ENV GOSU_VERSION 1.10
-RUN set -ex; \
-    \
-    apk add --no-cache --virtual .gosu-deps \
-        dpkg \
-        gnupg \
-        openssl \
-        wget \
-    ; \
-    \
-    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-    wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
-    \
-# verify the signature
-    export GNUPGHOME="$(mktemp -d)"; \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
-    gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-    rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc; \
-    \
-    chmod +x /usr/local/bin/gosu; \
-# verify that the binary works
-    gosu nobody true; \
-    \
-    apk del .gosu-deps
 
 # Use edge packages
-RUN set -ex \
-    && sed -i -e 's/v3\.\d/edge/g' /etc/apk/repositories \
-    && apk add --update --no-cache git python make musl-dev gcc
+RUN set -ex; \
+    sed -i -e 's/v3\.\d/edge/g' /etc/apk/repositories; \
+    echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories; \
+    apk add --upgrade --no-cache apk-tools; \
+    apk add --update --no-cache gosu@testing; \
+    apk add --update --no-cache git python make musl-dev gcc wget ca-certificates
 
 # Environment user
 RUN set -ex \
