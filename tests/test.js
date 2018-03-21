@@ -2,7 +2,7 @@ const assert = require('assert');
 const { spawnSync } = require('child_process')
 
 
-describe('tests', function() {
+describe('tests', function(done) {
     it('Check modules from packages.json are installed', function(done) {
         let stdout = spawnSync('npm', ['ls', '--json', '--depth', '0']).stdout
         let data = JSON.parse(stdout);
@@ -35,6 +35,7 @@ describe('tests', function() {
         assert.equal(spawnSync('test', ['-w', '/app']).status, 0, 'Wrong permissions for /app')
         done()
     })
+    done()
 })
 
 
