@@ -3,7 +3,7 @@ const { spawnSync } = require('child_process')
 
 
 describe('tests', function() {
-    it('Check modules from packages.json are installed', function() {
+    it('Check modules from packages.json are installed', function(done) {
         let stdout = spawnSync('npm', ['ls', '--json', '--depth', '0']).stdout
         let data = JSON.parse(stdout);
         let installed = Object.keys(data.dependencies);
@@ -11,6 +11,8 @@ describe('tests', function() {
         assert.equal(installed.length, 2)
         assert(installed.indexOf('mocha') > -1)
         assert(installed.indexOf('has-module') > -1)
+
+        done()
     })
 
     it('Common tools are installed', function(done) {
@@ -21,7 +23,7 @@ describe('tests', function() {
 
         done()
     })
-    
+
     it('Check docker extra entrypoints have run', function(done) {
         assert.equal(spawnSync('test', ['-f', '/tmp/hello-js']).status, 0, 'JS entrypoints has not run')
         assert.equal(spawnSync('test', ['-f', '/tmp/hello-sh']).status, 0, 'Script entrypoints has not run')
